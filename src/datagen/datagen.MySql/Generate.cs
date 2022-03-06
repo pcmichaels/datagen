@@ -1,4 +1,7 @@
-﻿namespace datagen.MySql
+﻿using MySql.Data.MySqlClient;
+using Dapper;
+
+namespace datagen.MySql
 {
     public class Generate : IGenerate
     {
@@ -9,9 +12,16 @@
             _connectionString = connectionString;
         }
 
-        public void AddRow()
+        public void AddRow(string tableName)
         {
-            throw new NotImplementedException();
+            using var connection = new MySqlConnection(_connectionString);
+            var result = connection.Query<string>(
+                "SELECT column_name " +
+                "FROM information_schema.columns " +
+                "WHERE table_name = @tableName",
+               new { tableName });
+            
+
         }
 
         public void FillColumn()

@@ -5,6 +5,6 @@
         void FillDB();
         void FillTable();
         void FillColumn();
-        void AddRow();
+        void AddRow(string tableName);
     }
 }

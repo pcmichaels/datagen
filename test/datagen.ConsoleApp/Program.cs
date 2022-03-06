@@ -3,5 +3,5 @@ using datagen.MySql;
 
 Console.WriteLine("Hello, World!");
 
-var generate = new Generate("Server=127.0.0.1;Port=3307;Database=musiclenderus;Uid=root;Pwd=mypass;AllowUserVariables=True");
-generate.AddRow();
+var generate = new Generate("Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True");
+generate.AddRow("test_table");
