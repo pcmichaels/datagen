@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\datagen.Core\datagen.Core.csproj" />
     <ProjectReference Include="..\datagen\datagen.csproj" />
   </ItemGroup>
 
