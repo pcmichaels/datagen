@@ -19,7 +19,8 @@ namespace datagen.MySql
         {
             using var connection = new MySqlConnection(_connectionString);
             var dataDefinition = connection.Query<DataDefinition>(
-                "SELECT column_name, data_type, character_maximum_length " +
+                "SELECT column_name, data_type, character_maximum_length, " +
+                "column_key, extra " +
                 "FROM information_schema.columns " +
                 "WHERE table_name = @tableName",
                new { tableName });
@@ -40,6 +41,8 @@ namespace datagen.MySql
 
             foreach (var dataDefinition in dataDefinitions)
             {
+                if (dataDefinition.Extra == MySqlConstants.KEY_AUTO_INCREMENT) continue;
+
                 if (!string.IsNullOrWhiteSpace(fields)) fields += ",";
                 fields += $"`{dataDefinition.Column_Name}`";
                 if (!string.IsNullOrWhiteSpace(values)) values += ",";

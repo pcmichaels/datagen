@@ -9,6 +9,7 @@ namespace datagen.Core
     public class ValueGenerator : IValueGenerator
     {
         private readonly bool _isRandom;
+        private readonly Random _random = new Random();
 
         public ValueGenerator(bool isRandom)
         {
@@ -17,21 +18,33 @@ namespace datagen.Core
 
         public object GenerateValue(string columnName, string dataType, bool isNullable)
         {
-            if (dataType == "varchar")
-                return "1";
+            switch (dataType)
+            {
+                case "varchar":
+                    return "1";                    
 
-            if (dataType == "datetime")
-                return "2022-03-02";
+                case "datetime":
+                    return DateTime.MaxValue;
+
+                case "int":
+                    return int.MaxValue;
+            }
 
             return 1;
         }
 
-        public int IntGeneric(bool allowNulls)
+        public int? IntGeneric(bool allowNulls)
         {
-            throw new NotImplementedException();
+            if (!_isRandom) return int.MaxValue;
+
+            if (allowNulls)
+            {
+                if (_random.Next(2) == 1) return null;
+            }
+            return _random.Next(int.MaxValue);
         }
 
-        public int IntGeneric(string fieldName, bool allowNulls)
+        public int? Int(string fieldName, bool allowNulls)
         {
             throw new NotImplementedException();
         }

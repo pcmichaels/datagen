@@ -15,7 +15,20 @@ namespace datagen.UnitTests
             int? value = valueGenerator.IntGeneric(true);
 
             // Assert
-            Assert.Equal(0, value.Value);
+            Assert.Equal(int.MaxValue, value.Value);
+        }
+
+        [Fact]
+        public void ValueGenerator_GenerateValue_int_Returns1()
+        {
+            // Arrange
+            var valueGenerator = new ValueGenerator(false);
+
+            // Act
+            var result = valueGenerator.GenerateValue("number", "int", false);
+
+            // Assert
+            Assert.Equal(1, result);
         }
     }
 }

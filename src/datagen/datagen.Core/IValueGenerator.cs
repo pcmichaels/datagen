@@ -2,7 +2,8 @@
 {
     public interface IValueGenerator
     {
-        public int IntGeneric(string fieldName, bool allowNulls);
+        public int? IntGeneric(bool allowNulls);
+        public int? Int(string fieldName, bool allowNulls);
         object GenerateValue(string columnName, string dataType, bool isNullable);
     }
 }

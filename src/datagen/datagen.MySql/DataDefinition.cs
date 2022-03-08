@@ -4,7 +4,9 @@
     {
         public string Column_Name { get; set; }
         public string Data_Type { get; set; }
-        public string Character_Maximum_Length { get; set; }
-        public bool Is_Nullable { get; set; }
+        public int? Character_Maximum_Length { get; set; }
+        public bool Is_Nullable { get; set; }    
+        public string Column_Key { get; set; }
+        public string Extra { get; set; }
     }
 }
