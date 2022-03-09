@@ -24,7 +24,7 @@ namespace datagen.Core
                     return "1";                    
 
                 case "datetime":
-                    return DateTime.MaxValue;
+                    return DateTime.MaxValue.AddDays(-1);
 
                 case "int":
                     return int.MaxValue;
