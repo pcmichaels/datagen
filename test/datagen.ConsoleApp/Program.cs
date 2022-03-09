@@ -7,4 +7,4 @@ var valueGenerator = new ValueGenerator(false);
 var generate = new Generate(
     "Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True",
     valueGenerator);
-generate.AddRow("test_table");
+await generate.AddRow("test_table");
