@@ -5,6 +5,6 @@
         void FillDB();
         void FillTable();
         void FillColumn();
-        Task AddRow(string tableName);
+        Task AddRow(string tableName, int count);
     }
 }
