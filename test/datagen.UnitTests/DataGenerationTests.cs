@@ -33,7 +33,7 @@ namespace datagen.UnitTests
         }
 
         [Fact]
-        public void ValueGenerator_GenerateValue_int_Returns1()
+        public void ValueGenerator_GenerateValue_int_Returns_1()
         {
             // Arrange
             var dateParameters = AssignDateValues();
@@ -46,5 +46,24 @@ namespace datagen.UnitTests
             // Assert
             Assert.Equal(int.MaxValue, result);
         }
+
+        [Theory]
+        [InlineData("datetime")]
+        [InlineData("timestamp")]
+        [InlineData("date")]
+        public void ValueGenerator_GenerateValue_Date_Returns_FunctionalDate(string dataType)
+        {
+            // Arrange
+            var dateParameters = AssignDateValues();
+            var valueGenerator = new ValueGenerator(false, dateParameters.FunctionalDate,
+                dateParameters.EarliestDate, dateParameters.LatestDate);
+
+            // Act
+            var result = valueGenerator.GenerateValue("datestamp", dataType, false, 20);
+
+            // Assert
+            Assert.Equal(dateParameters.LatestDate, result);
+        }
+
     }
 }

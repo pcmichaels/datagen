@@ -54,7 +54,7 @@ namespace datagen.Core
 
         private DateTime? GenerateValueDate(string columnName, bool isNullable)
         {
-            if (!_isRandom) DateTime.MaxValue.AddDays(-1);
+            if (!_isRandom) return _latestDate;
 
             if (isNullable && _random.Next(10) == 1) return null;
 
@@ -76,9 +76,18 @@ namespace datagen.Core
             {
                 return FirstNames[_random.Next(FirstNames.Length)];
             }
-            else if (columnName.Contains("lastname", StringComparison.OrdinalIgnoreCase))
+            else if (columnName.Contains("lastname", StringComparison.OrdinalIgnoreCase)
+                || columnName.Contains("surname", StringComparison.OrdinalIgnoreCase))
             {
-                return LastNames[_random.Next(FirstNames.Length)];
+                return LastNames[_random.Next(LastNames.Length)];
+            }
+            else if (columnName.Contains("name", StringComparison.OrdinalIgnoreCase))
+            {
+                return FirstNames[_random.Next(FirstNames.Length)];
+            }
+            else if (columnName.Contains("email", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"{FirstNames[_random.Next(FirstNames.Length)]}@{RandomString(5)}.com";
             }
 
             return RandomString(stringLength);
@@ -87,7 +96,7 @@ namespace datagen.Core
         // https://stackoverflow.com/questions/1344221/how-can-i-generate-random-alphanumeric-strings
         public string RandomString(long length)
         {
-            int repeat = (length > int.MaxValue) ? int.MaxValue : (int)length;
+            int repeat = (length > 1000) ? 1000 : (int)length;
 
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             return new string(Enumerable.Repeat(chars, repeat)

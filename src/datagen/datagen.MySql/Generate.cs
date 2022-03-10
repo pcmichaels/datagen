@@ -15,7 +15,7 @@ namespace datagen.MySql
             _valueGenerator = valueGenerator;
         }
 
-        public async Task AddRow(string tableName)
+        public async Task AddRow(string tableName, int count)
         {
             using var connection = new MySqlConnection(_connectionString);
             var dataDefinition = connection.Query<DataDefinition>(
@@ -25,10 +25,13 @@ namespace datagen.MySql
                 "WHERE table_name = @tableName",
                new { tableName });
 
-            var insertScript = GenerateInsertScript(dataDefinition, tableName);
+            for (int i = 0; i < count; i++)
+            {
+                var insertScript = GenerateInsertScript(dataDefinition, tableName);
 
-            var dynamicParameters = new DynamicParameters(insertScript.Parameters);            
-            int result = await connection.ExecuteAsync(insertScript.Script, dynamicParameters);
+                var dynamicParameters = new DynamicParameters(insertScript.Parameters);
+                int result = await connection.ExecuteAsync(insertScript.Script, dynamicParameters);
+            }
         }
 
         private InsertScript GenerateInsertScript(
