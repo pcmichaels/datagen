@@ -52,7 +52,8 @@ namespace datagen.MySql
                 insertScript.Parameters.Add(
                     $"{dataDefinition.Column_Name}Value",
                     _valueGenerator.GenerateValue(dataDefinition.Column_Name, 
-                        dataDefinition.Data_Type, dataDefinition.Is_Nullable));
+                        dataDefinition.Data_Type, dataDefinition.Is_Nullable, 
+                        dataDefinition.Character_Maximum_Length ?? 0));
             }
 
             insertScript.Script = $"INSERT INTO {tableName} ({fields}) VALUES ({values})";
