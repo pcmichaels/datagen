@@ -8,11 +8,14 @@ namespace datagen.MySql
     {
         private readonly string _connectionString;
         private readonly IValueGenerator _valueGenerator;
+        private readonly IDataTypeParser _dataTypeParser;
 
-        public Generate(string connectionString, IValueGenerator valueGenerator)
+        public Generate(string connectionString, IValueGenerator valueGenerator,
+            IDataTypeParser dataTypeParser)
         {
             _connectionString = connectionString;
             _valueGenerator = valueGenerator;
+            _dataTypeParser = dataTypeParser;
         }
 
         public async Task AddRow(string tableName, int count)
@@ -44,7 +47,7 @@ namespace datagen.MySql
 
             foreach (var dataDefinition in dataDefinitions)
             {
-                if (dataDefinition.Extra == MySqlConstants.KEY_AUTO_INCREMENT) continue;
+                if (dataDefinition.Extra == MySqlConstants.KEY_AUTO_INCREMENT) continue;                
 
                 if (!string.IsNullOrWhiteSpace(fields)) fields += ",";
                 fields += $"`{dataDefinition.Column_Name}`";
@@ -52,17 +55,55 @@ namespace datagen.MySql
                 values += $"@{dataDefinition.Column_Name}Value";
 
                 insertScript.Parameters.Add(dataDefinition.Column_Name, dataDefinition.Column_Name);
-                insertScript.Parameters.Add(
-                    $"{dataDefinition.Column_Name}Value",
-                    _valueGenerator.GenerateValue(dataDefinition.Column_Name, 
-                        dataDefinition.Data_Type, dataDefinition.Is_Nullable, 
-                        dataDefinition.Character_Maximum_Length ?? 0));
+
+                if (dataDefinition.Column_Key == MySqlConstants.KEY_PRIMARY)
+                {
+                    var key = GenerateUniqueKey(
+                        tableName, 
+                        dataDefinition.Column_Name, 
+                        dataDefinition.Character_Maximum_Length ?? 0, 
+                        dataDefinition.Data_Type);
+                    insertScript.Parameters.Add(
+                        $"{dataDefinition.Column_Name}Value", key);
+                }
+                else
+                {
+                    insertScript.Parameters.Add(
+                        $"{dataDefinition.Column_Name}Value",
+                        _valueGenerator.GenerateValue(dataDefinition.Column_Name,
+                            dataDefinition.Data_Type, dataDefinition.Is_Nullable,
+                            dataDefinition.Character_Maximum_Length ?? 0));
+                }
             }
 
             insertScript.Script = $"INSERT INTO {tableName} ({fields}) VALUES ({values})";
             //insertScript.Parameters.Add("tableName", tableName);
 
             return insertScript;
+        }
+
+        // ToDo: Separate into UniqueKeyGenerator class
+        private object GenerateUniqueKey(string tableName, string columnName, long columnLength, string dataType)
+        {
+            if (_dataTypeParser.IsTypeInteger(dataType))
+            {
+                // go to DB and fine max
+            }
+            //using var connection = new MySqlConnection(_connectionString);
+            /*
+            var dataDefinition = connection.Query<?>(
+                
+                "WHERE table_name = @tableName",
+               new { tableName });
+            */
+            return Truncate(Guid.NewGuid().ToString(), (int)columnLength);
+        }
+
+        // https://stackoverflow.com/questions/2776673/how-do-i-truncate-a-net-string
+        private string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength);
         }
 
         public void FillColumn()
