@@ -84,19 +84,21 @@ namespace datagen.MySql
 
         // ToDo: Separate into UniqueKeyGenerator class
         private object GenerateUniqueKey(string tableName, string columnName, long columnLength, string dataType)
-        {
+        {            
             if (_dataTypeParser.IsTypeInteger(dataType))
             {
-                // go to DB and fine max
+                using var connection = new MySqlConnection(_connectionString);
+
+                string sql = $"SELECT MAX(`{columnName}`) " +
+                    $"FROM {tableName}";
+                int pk = connection.ExecuteScalar<int>(sql);                    
+                return pk + 1;
             }
-            //using var connection = new MySqlConnection(_connectionString);
-            /*
-            var dataDefinition = connection.Query<?>(
-                
-                "WHERE table_name = @tableName",
-               new { tableName });
-            */
-            return Truncate(Guid.NewGuid().ToString(), (int)columnLength);
+            else if  (_dataTypeParser.IsTypeString(dataType))
+            {
+                return Truncate(Guid.NewGuid().ToString(), (int)columnLength);                
+            }
+            throw new Exception($"Unable to process primary key of type {dataType}");
         }
 
         // https://stackoverflow.com/questions/2776673/how-do-i-truncate-a-net-string

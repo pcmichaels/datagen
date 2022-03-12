@@ -2,8 +2,11 @@
 using datagen.Core;
 using datagen.MySql;
 
-var valueGenerator = new ValueGenerator(false,
-    DateTime.Now, DateTime.Now.AddDays(-100), DateTime.Now.AddDays(10));
+var valueGenerator = new ValueGenerator(
+    true,
+    DateTime.Now, 
+    DateTime.Now.AddDays(-100), 
+    DateTime.Now.AddDays(10));
 
 var dataTypeParser = new MySqlDataTypeParser();
 
