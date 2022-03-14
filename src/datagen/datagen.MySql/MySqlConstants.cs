@@ -9,6 +9,7 @@ namespace datagen.MySql
     public static class MySqlConstants
     {
         public static string KEY_AUTO_INCREMENT = "auto_increment";
-        internal static string KEY_PRIMARY = "PRI";
+        public static string KEY_PRIMARY = "PRI";
+        public static string CONSTRAINT_PRIMARY = "PRIMARY";
     }
 }

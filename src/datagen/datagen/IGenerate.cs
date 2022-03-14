@@ -2,9 +2,7 @@
 {
     public interface IGenerate
     {
-        void FillDB();
-        void FillTable();
-        void FillColumn();
-        Task AddRow(string tableName, int count);
+        Task FillSchema(int rowsPerTable, string schema);
+        Task AddRow(string tableName, int count, string schema);
     }
 }

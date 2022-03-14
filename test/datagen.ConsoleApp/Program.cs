@@ -14,4 +14,5 @@ var generate = new Generate(
     "Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True",
     valueGenerator,
     dataTypeParser);
-await generate.AddRow("test_table", 50);
+//await generate.AddRow("test_table", 50);
+await generate.FillSchema(20, "datagentest");

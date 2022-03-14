@@ -1,4 +1,4 @@
-﻿namespace datagen.MySql
+﻿namespace datagen.MySql.MetaData
 {
     internal class DataDefinition
     {

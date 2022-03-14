@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using Dapper;
 using datagen.Core;
+using datagen.MySql.MetaData;
 
 namespace datagen.MySql
 {
@@ -18,19 +19,30 @@ namespace datagen.MySql
             _dataTypeParser = dataTypeParser;
         }
 
-        public async Task AddRow(string tableName, int count)
+        public async Task AddRow(string tableName, int count, string schema)
         {
             using var connection = new MySqlConnection(_connectionString);
             var dataDefinition = connection.Query<DataDefinition>(
-                "SELECT column_name, data_type, character_maximum_length, " +
-                "column_key, extra " +
-                "FROM information_schema.columns " +
-                "WHERE table_name = @tableName",
-               new { tableName });
+                "SELECT COLUMN_NAME, DATA_TYPE, CHARACTER_MAXIMUM_LENGTH, " +
+                "COLUMN_KEY, EXTRA " +
+                "FROM INFORMATION_SCHEMA.COLUMNS " +
+                "WHERE TABLE_NAME = @tableName " +
+                "AND TABLE_SCHEMA = @tableSchema",
+               new { tableName, schema });
+
+            // Check for foreign keys
+            var foreignKeys = connection.Query<ColumnKeys>(
+                "SELECT CONSTRAINT_NAME, COLUMN_NAME, " +
+                "REFERENCED_TABLE_SCHEMA, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME " +
+                "FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE " +
+                "WHERE TABLE_NAME = @tableName " + 
+                "AND CONSTRAINT_SCHEMA = @schema",
+               new { tableName, schema });
 
             for (int i = 0; i < count; i++)
             {
-                var insertScript = GenerateInsertScript(dataDefinition, tableName);
+                var insertScript = GenerateInsertScript(
+                    dataDefinition, foreignKeys, tableName);
 
                 var dynamicParameters = new DynamicParameters(insertScript.Parameters);
                 int result = await connection.ExecuteAsync(insertScript.Script, dynamicParameters);
@@ -39,6 +51,7 @@ namespace datagen.MySql
 
         private InsertScript GenerateInsertScript(
             IEnumerable<DataDefinition> dataDefinitions,
+            IEnumerable<ColumnKeys> columnKeys,
             string tableName)
         {
             string fields = string.Empty;
@@ -47,7 +60,9 @@ namespace datagen.MySql
 
             foreach (var dataDefinition in dataDefinitions)
             {
-                if (dataDefinition.Extra == MySqlConstants.KEY_AUTO_INCREMENT) continue;                
+                if (dataDefinition.Extra == MySqlConstants.KEY_AUTO_INCREMENT) continue;
+                if (columnKeys.Any(a => a.Column_Name == dataDefinition.Column_Name
+                    && a.Constraint_Name != MySqlConstants.CONSTRAINT_PRIMARY)) continue;
 
                 if (!string.IsNullOrWhiteSpace(fields)) fields += ",";
                 fields += $"`{dataDefinition.Column_Name}`";
@@ -108,19 +123,22 @@ namespace datagen.MySql
             return value.Length <= maxLength ? value : value.Substring(0, maxLength);
         }
 
-        public void FillColumn()
+        public async Task FillSchema(int rowsPerTable, string schema)
         {
-            throw new NotImplementedException();
+            IEnumerable<string> tables;
+            string sql = "SELECT table_name FROM information_schema.tables " +
+                "WHERE TABLE_SCHEMA = @tableSchema";
+            using (var connection = new MySqlConnection(_connectionString))
+            {
+                tables = connection.Query<string>(sql, new {schema});
+            }
+
+            foreach (var table in tables)
+            {
+                await AddRow(table, rowsPerTable, schema);
+            }
+
         }
 
-        public void FillDB()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void FillTable()
-        {
-            throw new NotImplementedException();
-        }
     }
 }
