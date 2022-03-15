@@ -5,8 +5,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>Paul Michaels</Authors>
-    <Version>0.0.2</Version>
+    <Version>0.0.3</Version>
     <Description>Generate test data for MySql</Description>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
