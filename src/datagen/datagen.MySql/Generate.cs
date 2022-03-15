@@ -137,8 +137,6 @@ namespace datagen.MySql
             {
                 await AddRow(table, rowsPerTable, schema);
             }
-
         }
-
     }
 }
