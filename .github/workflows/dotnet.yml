@@ -18,8 +18,8 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore ./datagen/
+      run: dotnet restore ./src/datagen/
     - name: Build
       run: dotnet build --no-restore ./src/datagen
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./datagen
+      run: dotnet test --no-build --verbosity normal ./src/datagen
