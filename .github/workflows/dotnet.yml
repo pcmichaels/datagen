@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release --no-restore ./src/datagen
     - name: Test
-      run: dotnet test --no-build --verbosity normal ./src/datagen
+      run: dotnet test --verbosity normal ./src/datagen
     - name: Package
       run: dotnet pack -c Release -o . ./src/datagen/datagen.MySql/datagen.MySql.csproj
     - name: Publish
