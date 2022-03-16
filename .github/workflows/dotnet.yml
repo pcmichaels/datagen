@@ -20,7 +20,7 @@ jobs:
     - name: Restore dependencies
       run: dotnet restore ./src/datagen/
     - name: Build
-      run: dotnet build --no-restore ./src/datagen
+      run: dotnet build --configuration Release --no-restore ./src/datagen
     - name: Test
       run: dotnet test --no-build --verbosity normal ./src/datagen
     - name: Package
