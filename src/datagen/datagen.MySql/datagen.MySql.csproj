@@ -5,7 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Authors>Paul Michaels</Authors>
-    <Version>0.0.5</Version>
+    <Version>0.0.6</Version>
     <Description>Generate test data for MySql</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -15,8 +15,8 @@
     <PackageReference Include="MySql.Data" Version="8.0.28" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\datagen.Core\datagen.Core.csproj" />
+  <ItemGroup>	
+    <ProjectReference PrivateAssets="all" Include="..\datagen.Core\datagen.Core.csproj" />
   </ItemGroup>
 
 </Project>
