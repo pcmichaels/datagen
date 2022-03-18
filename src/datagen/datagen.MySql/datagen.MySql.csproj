@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>	
-    <ProjectReference PrivateAssets="all" Include="..\datagen.Core\datagen.Core.csproj" />
+    <ProjectReference Include="..\datagen.Core\datagen.Core.csproj"/>          
   </ItemGroup>
 
 </Project>

@@ -1,5 +1,4 @@
-﻿using datagen.Core;
-using datagen.MySql;
+﻿using datagen.MySql;
 using datagen.MySql.KeyGeneration;
 
 var valueGenerator = new ValueGenerator(
