@@ -1,4 +1,4 @@
-name: .NET
+name: datagen.MySql
 
 on:
   push:
