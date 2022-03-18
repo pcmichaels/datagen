@@ -1,4 +1,4 @@
-﻿namespace datagen.MySql.KeyGeneration
+﻿namespace datagen.Core
 {
     public interface IUniqueKeyGenerator
     {

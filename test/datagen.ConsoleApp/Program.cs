@@ -1,6 +1,6 @@
 ﻿using datagen.Core;
 using datagen.MySql;
-using datagen.MySql.KeyGeneration;
+using datagen.MySql.MySql;
 
 var valueGenerator = new ValueGenerator(
     true,
@@ -9,15 +9,13 @@ var valueGenerator = new ValueGenerator(
     DateTime.Now.AddDays(10));
 
 string connectionString = "Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True";
-var dataTypeParser = new MySqlDataTypeParser();
-var uniqueKeyGenerator = new UniqueKeyGenerator(
-    connectionString,
-    dataTypeParser);
+
+var mySqlDefaults = new MySqlDefaults(connectionString);
 
 var generate = new Generate(    
     connectionString,
     valueGenerator,
-    dataTypeParser,
-    uniqueKeyGenerator);
+    mySqlDefaults.DataTypeParser,
+    mySqlDefaults.UniqueKeyGenerator);
 //await generate.AddRow("test_table", 50, "datagentest");
 await generate.FillSchema(20, "datagentest");
