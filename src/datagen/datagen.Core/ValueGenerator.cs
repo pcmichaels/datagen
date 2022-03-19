@@ -1,4 +1,5 @@
-﻿using System;
+﻿using datagen.Core.PseudoData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -74,20 +75,20 @@ namespace datagen.Core
 
             if (columnName.Contains("firstname", StringComparison.OrdinalIgnoreCase))
             {
-                return FirstNames[_random.Next(FirstNames.Length)];
+                return Names.FirstNames[_random.Next(Names.FirstNames.Length)];
             }
             else if (columnName.Contains("lastname", StringComparison.OrdinalIgnoreCase)
                 || columnName.Contains("surname", StringComparison.OrdinalIgnoreCase))
             {
-                return LastNames[_random.Next(LastNames.Length)];
+                return Names.LastNames[_random.Next(Names.LastNames.Length)];
             }
             else if (columnName.Contains("name", StringComparison.OrdinalIgnoreCase))
             {
-                return FirstNames[_random.Next(FirstNames.Length)];
+                return Names.FirstNames[_random.Next(Names.FirstNames.Length)];
             }
             else if (columnName.Contains("email", StringComparison.OrdinalIgnoreCase))
             {
-                return $"{FirstNames[_random.Next(FirstNames.Length)]}@{RandomString(5)}.com";
+                return $"{Names.FirstNames[_random.Next(Names.FirstNames.Length)]}@{RandomString(5)}.com";
             }
 
             return RandomString(stringLength);
@@ -98,7 +99,7 @@ namespace datagen.Core
         {
             int repeat = (length > 1000) ? 1000 : (int)length;
 
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ;/\\,.<>!\"££$%^&*()_+=_";
             return new string(Enumerable.Repeat(chars, repeat)
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
         }
@@ -108,20 +109,6 @@ namespace datagen.Core
             int days = (end - start).Days;
             return start.AddDays(_random.Next(days));
         }
-
-        private string[] FirstNames = new[]
-        {
-            "Albert", "Abigail", "Amy", "Arnold", "Allan", "Ahmed", "Brian", "Billy", 
-            "Barbara", "Bridget", "Carl", "Ceri",
-            "Catherine", "Charlotte", "Dennis", "Donald", "Diedre", "Ian"
-        };
-
-        private string[] LastNames = new[]
-        {
-            "Briggs", "Bennet", "Crowther", "Corbett", "Dodds", "Einstein", 
-            "Heisenburg", "O'Shea", "Van-Halen", "Kilmister",
-            "Zuckowski"
-        };
 
         public int? IntGeneric(bool allowNulls)
         {
