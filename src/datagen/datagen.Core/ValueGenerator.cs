@@ -1,4 +1,5 @@
-﻿using datagen.Core.PseudoData;
+﻿using datagen.Core.Extensions;
+using datagen.Core.PseudoData;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,18 +40,32 @@ namespace datagen.Core
                     return GenerateValueDate(columnName, isNullable);
                     
                 case "int":
-                    return int.MaxValue;
+                    return GenerateValueNumber(int.MaxValue);
 
                 case "tinyint":
-                    return 0;
+                    return GenerateValueNumber(256);
 
                 case "decimal":
-                    return 0;
+                    return GenerateValueFloat(decimal.MaxValue);
 
                 default:
                     throw new Exception($"Data type not available {dataType}");
             }
             
+        }
+        
+        private decimal? GenerateValueFloat(decimal maxValue)
+        {
+            if (!_isRandom) return maxValue;
+
+            return _random.NextDecimal();
+        }
+
+        private int? GenerateValueNumber(int maxValue)
+        {
+            if (!_isRandom) return maxValue;
+
+            return _random.Next(maxValue);
         }
 
         private DateTime? GenerateValueDate(string columnName, bool isNullable)
