@@ -25,7 +25,7 @@ namespace datagen.MySql
             _uniqueKeyGenerator = uniqueKeyGenerator;            
         }
 
-        public async Task AddRow(string tableName, int count, string schema, object primaryKey = null)
+        public async Task AddRow(string tableName, int count, string schema, object? primaryKey = null)
         {
             var getMetaData = new GetMetaData(_connectionString);
             var dataDefinition = getMetaData.GetColumnDefinitions(tableName, schema);

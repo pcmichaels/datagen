@@ -46,7 +46,7 @@ namespace datagen.Core
                     return GenerateValueNumber(256);
 
                 case "decimal":
-                    return GenerateValueFloat(decimal.MaxValue);
+                    return GenerateValueFloat(columnName);
 
                 default:
                     throw new Exception($"Data type not available {dataType}");
@@ -54,9 +54,14 @@ namespace datagen.Core
             
         }
         
-        private decimal? GenerateValueFloat(decimal maxValue)
+        private decimal? GenerateValueFloat(string columnName, decimal maxValue = decimal.MaxValue)
         {
             if (!_isRandom) return maxValue;
+
+            if (columnName.Contains("balance", StringComparison.OrdinalIgnoreCase))
+            {
+                return _random.NextDecimal(Numbers.MONEY_MAX, Numbers.MONEY_MIN);
+            }
 
             return _random.NextDecimal();
         }
