@@ -108,18 +108,21 @@ namespace datagen.Core
             }
             else if (columnName.Contains("email", StringComparison.OrdinalIgnoreCase))
             {
-                return $"{Names.FirstNames[_random.Next(Names.FirstNames.Length)]}@{RandomString(5)}.com";
-            }
+                return $"{Names.FirstNames[_random.Next(Names.FirstNames.Length)]}@{RandomString(5, false)}.com";
+            }            
 
-            return RandomString(stringLength);
+            return RandomString(stringLength, true);
         }
 
         // https://stackoverflow.com/questions/1344221/how-can-i-generate-random-alphanumeric-strings
-        public string RandomString(long length)
+        public string RandomString(long length, bool includeNonAlpha)
         {
             int repeat = (length > 1000) ? 1000 : (int)length;
 
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ;/\\,.<>!\"££$%^&*()_+=_";
+            string chars = includeNonAlpha 
+                ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 ;/\\,.<>!\"££$%^&*()_+=_@{}[]"
+                : "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
             return new string(Enumerable.Repeat(chars, repeat)
                 .Select(s => s[_random.Next(s.Length)]).ToArray());
         }

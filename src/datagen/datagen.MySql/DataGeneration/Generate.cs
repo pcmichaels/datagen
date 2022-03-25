@@ -11,7 +11,8 @@ namespace datagen.MySql
         private readonly string _connectionString;
         private readonly IValueGenerator _valueGenerator;
         private readonly IDataTypeParser _dataTypeParser;
-        private readonly IUniqueKeyGenerator _uniqueKeyGenerator;       
+        private readonly IUniqueKeyGenerator _uniqueKeyGenerator;    
+        private Dictionary<string, string> _foreignKeyMappings = new Dictionary<string, string>();
 
         public Generate(    
             string connectionString,
@@ -25,8 +26,17 @@ namespace datagen.MySql
             _uniqueKeyGenerator = uniqueKeyGenerator;            
         }
 
+        public void CreateForeignKeyMapping(string from, string to) =>        
+            _foreignKeyMappings.Add(from, to);        
+
         public async Task AddRow(string tableName, int count, string schema, object? primaryKey = null)
         {
+            if (count > 1 && primaryKey != null)            
+                throw new Exception("Primary Key can only be specified for a single row update");
+            
+            if (count < 0)            
+                throw new Exception("Count must be greater than zero");            
+
             var getMetaData = new GetMetaData(_connectionString);
             var dataDefinition = getMetaData.GetColumnDefinitions(tableName, schema);
             var foreignKeys = getMetaData.GetColumnData(tableName, schema);
@@ -62,6 +72,22 @@ namespace datagen.MySql
 
                 var columnKey = columnKeys.FirstOrDefault(a => a.Column_Name == dataDefinition.Column_Name
                     && a.Constraint_Name != MySqlConstants.CONSTRAINT_PRIMARY);
+
+                var mappings = _foreignKeyMappings.Where(a => a.Key == $"{tableName}.{dataDefinition.Column_Name}");
+
+                if (mappings.Any())
+                {
+                    var mappingDestination = mappings.First().Value.Split('.');
+                    if (columnKey == null)
+                        columnKey = new ColumnKeys();
+                    columnKey.Referenced_Table_Name = mappingDestination[0];
+                    columnKey.Referenced_Column_Name = mappingDestination[1];
+                    var value = await AddForeignKey(schema, insertScript, dataDefinition, columnKey);
+                    AddFieldValues(ref fields, ref values, dataDefinition);
+                    insertScript.Parameters.Add(dataDefinition.Column_Name, dataDefinition.Column_Name);
+                    continue;
+                }
+
                 if (columnKey != null) // Foreign Key
                 {
                     var value = await AddForeignKey(schema, insertScript, dataDefinition, columnKey);
