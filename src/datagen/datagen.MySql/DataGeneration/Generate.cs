@@ -3,6 +3,7 @@ using Dapper;
 using datagen.Core;
 using datagen.MySql.MetaData;
 using datagen.MySql.MySql;
+using datagen.Core.DataAccessor;
 
 namespace datagen.MySql
 {
@@ -11,19 +12,22 @@ namespace datagen.MySql
         private readonly string _connectionString;
         private readonly IValueGenerator _valueGenerator;
         private readonly IDataTypeParser _dataTypeParser;
-        private readonly IUniqueKeyGenerator _uniqueKeyGenerator;    
+        private readonly IUniqueKeyGenerator _uniqueKeyGenerator;
+        private readonly IDataAccessorFactory _dataAccessorFactory;        
         private Dictionary<string, string> _foreignKeyMappings = new Dictionary<string, string>();
 
         public Generate(    
             string connectionString,
             IValueGenerator valueGenerator,
             IDataTypeParser dataTypeParser,
-            IUniqueKeyGenerator uniqueKeyGenerator)
+            IUniqueKeyGenerator uniqueKeyGenerator,
+            IDataAccessorFactory dataAccessorFactory)
         {
             _connectionString = connectionString;
             _valueGenerator = valueGenerator;
             _dataTypeParser = dataTypeParser;
-            _uniqueKeyGenerator = uniqueKeyGenerator;            
+            _uniqueKeyGenerator = uniqueKeyGenerator;
+            _dataAccessorFactory = dataAccessorFactory;
         }
 
         public void CreateForeignKeyMapping(string from, string to) =>        
@@ -35,9 +39,9 @@ namespace datagen.MySql
                 throw new Exception("Primary Key can only be specified for a single row update");
             
             if (count < 0)            
-                throw new Exception("Count must be greater than zero");            
+                throw new Exception("Count must be greater than zero");
 
-            var getMetaData = new GetMetaData(_connectionString);
+            var getMetaData = _dataAccessorFactory.GetDataReader<GetMetaData>(() => new GetMetaData(_connectionString));
             var dataDefinition = getMetaData.GetColumnDefinitions(tableName, schema);
             var foreignKeys = getMetaData.GetColumnData(tableName, schema);
 

@@ -1,6 +1,9 @@
 ﻿using datagen.Core;
+using datagen.Core.DataAccessor;
 using datagen.MySql;
 using datagen.MySql.MySql;
+using datagen.UnitTests.Mocks;
+using NSubstitute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,11 +25,15 @@ namespace datagen.UnitTests
                 DateTime.Now.AddDays(-100),
                 DateTime.Now.AddDays(10));
 
-            var mySqlDefaults = new MySqlDefaults("");
+            var dataAccessorFactory = Substitute.For<IDataAccessorFactory>();
+            var reader = dataAccessorFactory.GetDataReader<>(() => new GetMetaDataTest());
+
+            var mySqlDefaults = new MySqlDefaults("");            
             var generate = new Generate("", 
                 valueGenerator, 
                 mySqlDefaults.DataTypeParser,
-                mySqlDefaults.UniqueKeyGenerator);
+                mySqlDefaults.UniqueKeyGenerator,
+                dataAccessorFactory);
 
             // Act
             await generate.AddRow("some_table", 2, "my_schema");

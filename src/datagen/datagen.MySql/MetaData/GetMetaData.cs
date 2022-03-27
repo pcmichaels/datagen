@@ -12,6 +12,7 @@ namespace datagen.MySql.MetaData
     {
         private readonly string _connectionString;
 
+
         public GetMetaData(string connectionString)
         {
             _connectionString = connectionString;
