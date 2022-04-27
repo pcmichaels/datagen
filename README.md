@@ -18,13 +18,18 @@ var valueGenerator = new ValueGenerator(
 string connectionString = "Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True";
 
 var mySqlDefaults = new MySqlDefaults(connectionString);
+var dataAccessorFactory = mySqlDefaults.DataAccessorFactory;
 
 var generate = new Generate(    
     connectionString,
     valueGenerator,
     mySqlDefaults.DataTypeParser,
-    mySqlDefaults.UniqueKeyGenerator);
+    mySqlDefaults.UniqueKeyGenerator, 
+    dataAccessorFactory);
+
+//await generate.AddRow("test_table", 50, "datagentest");
 await generate.FillSchema(20, "datagentest");
+
 ```
 
 ## ValueGenerator
@@ -35,11 +40,6 @@ Provides an engine to generate psuedo data.  This will use the field name to att
 ## Generate
 
 Passed a valid connection string, this will populate a single table, or an entire DB schema.
-
-
-# Limitations
-
-Currently does now cater for foreign key relationships; that is, any foreign keys will be omitted from the data, rather than cross populated.
 
 
 # Contibutions
