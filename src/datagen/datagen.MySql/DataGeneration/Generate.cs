@@ -42,16 +42,32 @@ namespace datagen.MySql
                 throw new Exception("Count must be greater than zero");
 
             var getMetaData = _dataAccessorFactory.GetDataReader<GetMetaData>(() => new GetMetaData(_connectionString));
-            var dataDefinition = getMetaData.GetColumnDefinitions(tableName, schema);
-            var foreignKeys = getMetaData.GetColumnData(tableName, schema);
+            if (getMetaData == null) return;
 
-            // ToDo - refactor
-            var dataUpdater = new DataUpdater(_connectionString);
+            var dataDefinitionDict = getMetaData.GetColumnDefinitions(
+                new Dictionary<string, string>() { 
+                    { "TableName", tableName },
+                    { "Schema", schema } 
+                });
+            var dataDefinitionList = new List<DataDefinition>();
+
+            foreach (var dataDefinitionEntry in dataDefinitionDict)
+            {
+                var dataDefinition = DataDefinition.ConvertFromDict(
+                    dataDefinitionEntry);
+                dataDefinitionList.Add(dataDefinition);
+            }
+
+            var foreignKeys = getMetaData.GetColumnData(tableName, schema);
+            
+            var dataUpdater = _dataAccessorFactory.GetDataUpdater<DataUpdater>(() => new DataUpdater(_connectionString));
+            if (dataUpdater == null) return;
 
             for (int i = 0; i < count; i++)
             {
                 var insertScripts = await GenerateInsertScript(
-                    dataDefinition, foreignKeys, tableName, schema, primaryKey);
+                    dataDefinitionList, 
+                    foreignKeys, tableName, schema, primaryKey);
 
                 // ToDo - refactor
                 await dataUpdater.RunInsertScripts(insertScripts);

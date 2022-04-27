@@ -11,11 +11,14 @@ var valueGenerator = new ValueGenerator(
 string connectionString = "Server=127.0.0.1;Port=3306;Database=datagentest;Uid=root;Pwd=password;AllowUserVariables=True";
 
 var mySqlDefaults = new MySqlDefaults(connectionString);
+var dataAccessorFactory = mySqlDefaults.DataAccessorFactory;
 
 var generate = new Generate(    
     connectionString,
     valueGenerator,
     mySqlDefaults.DataTypeParser,
-    mySqlDefaults.UniqueKeyGenerator);
+    mySqlDefaults.UniqueKeyGenerator, 
+    dataAccessorFactory);
+
 //await generate.AddRow("test_table", 50, "datagentest");
 await generate.FillSchema(20, "datagentest");

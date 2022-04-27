@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using datagen.Core.DataAccessor;
 using MySql.Data.MySqlClient;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace datagen.MySql.MySql
 {
-    internal class DataUpdater
+    internal class DataUpdater : IDataUpdater
     {
         private readonly string _connectionString;
 

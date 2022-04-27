@@ -11,12 +11,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Castr" Version="2.1.3" />
     <PackageReference Include="Dapper" Version="2.0.123" />
     <PackageReference Include="MySql.Data" Version="8.0.28" />
   </ItemGroup>
 
   <ItemGroup>	
-    <ProjectReference Include="..\datagen.Core\datagen.Core.csproj"/>          
+    <ProjectReference Include="..\datagen.Core\datagen.Core.csproj" />          
   </ItemGroup>
 
 </Project>
